@@ -15,7 +15,7 @@ try:
 except ImportError:
     HAS_TESSERACT = False
 
-app = Flask(__name__)
+app = Flask(__name__)  
 CORS(app, origins=os.environ.get("FRONTEND_URL", "*").split(","))
 
 
