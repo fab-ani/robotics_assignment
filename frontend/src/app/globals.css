@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+:root {
+  --bg-primary: #09090B;
+  --bg-secondary: #18181B;
+  --border: #27272A;
+  --text-muted: #A1A1AA;
+  --text-primary: #FAFAFA;
+  --accent-glow: #FFFFFF;
+}
+
+@theme inline {
+  --color-background: var(--bg-primary);
+  --color-foreground: var(--text-primary);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@keyframes loading-bar {
+  0% { width: 0%; margin-left: 0%; }
+  50% { width: 60%; margin-left: 20%; }
+  100% { width: 0%; margin-left: 100%; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(255,255,255,0.05); }
+  50% { box-shadow: 0 0 20px rgba(255,255,255,0.1); }
+}
+
+@keyframes traffic-pulse {
+  0%, 100% { opacity: 0.35; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.25); }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #09090B; }
+::-webkit-scrollbar-thumb { background: #27272A; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+
+/* Selection */
+::selection { background: rgba(255,255,255,0.15); color: #FAFAFA; }
+
+/* Report print layout */
+@media print {
+  body * { visibility: hidden; }
+  #report-section, #report-section * { visibility: visible; }
+  #report-section {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: #ffffff !important;
+    color: #111111 !important;
+  }
+  #report-section .no-print { display: none !important; }
+  #report-section .report-page { page-break-after: always; }
+  #report-section img { max-width: 100% !important; }
+}
+
