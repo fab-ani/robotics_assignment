@@ -416,8 +416,8 @@ for thresh_val in thresholds:
               <>
                 <div className="bg-[#09090B] border border-[#27272A] rounded-lg p-4 text-xs space-y-1">
                   <p><span className="font-bold text-[#FAFAFA]">Actual Text:</span> <span className="font-mono">{ocrResult.actual_text || "N/A"}</span></p>
-                  <p><span className="font-bold text-[#FAFAFA]">Best OCR Output:</span> <span className="font-mono">{ocrResult.results[1]?.ocr_text || "N/A"}</span></p>
-                  <p><span className="font-bold text-[#FAFAFA]">Accuracy:</span> {ocrResult.results[1]?.accuracy ?? "N/A"}%</p>
+                  <p><span className="font-bold text-[#FAFAFA]">Best OCR Output:</span> <span className="font-mono">{bestResult?.ocr_text || "N/A"}</span></p>
+                  <p><span className="font-bold text-[#FAFAFA]">Best Accuracy:</span> {bestResult?.accuracy ?? "N/A"}% (threshold {bestResult?.threshold})</p>
                 </div>
                 <p className="text-xs text-[#A1A1AA]">
                   <strong>Formula:</strong> Accuracy = (Correctly Recognized Characters / Total Characters) x 100
@@ -551,6 +551,14 @@ for thresh_val in thresholds:
               <p className="text-xs text-gray-400 italic mb-3">Run preprocessing above to record image dimensions.</p>
             )}
             <pre className="bg-gray-100 border border-gray-300 rounded p-3 text-[11px] overflow-x-auto"><code>{task1Code}</code></pre>
+            <div className="mt-3 text-xs">
+              <p className="font-bold text-gray-900">Discussion: Image acquisition considerations</p>
+              <p className="text-gray-600 leading-relaxed">
+                The selected image{preprocessResult ? ` measures ${preprocessResult.dimensions.width} x ${preprocessResult.dimensions.height} pixels across 3 color channels (BGR).` : " dimensions are recorded after preprocessing."}
+                {" "}Higher resolution images provide more pixel data per character, which generally improves OCR accuracy, but also increases processing time.
+                In a robotics context, image acquisition conditions (lighting, distance, camera angle) directly affect the quality of text visible in the frame.
+              </p>
+            </div>
           </section>
 
           {/* Task 2 */}
@@ -620,6 +628,18 @@ for thresh_val in thresholds:
               <p className="text-xs text-gray-400 italic mb-3">Run OCR extraction above to include results.</p>
             )}
             <pre className="bg-gray-100 border border-gray-300 rounded p-3 text-[11px] overflow-x-auto"><code>{task4Code}</code></pre>
+            <div className="mt-3 text-xs">
+              <p className="font-bold text-gray-900">Discussion: OCR configuration and results</p>
+              <p className="text-gray-600 leading-relaxed">
+                Tesseract was run with page segmentation mode 6 (--psm 6), which assumes the input is a single
+                uniform block of text. This is appropriate for a cropped region containing one line or a short
+                phrase. The preprocessing pipeline (grayscale conversion at threshold 120) was applied before
+                Tesseract to improve contrast between text and background.
+                {ocrResult
+                  ? ` The OCR returned "${ocrResult.results[1]?.ocr_text || "N/A"}" against the actual text "${ocrResult.actual_text || "N/A"}".`
+                  : ""}
+              </p>
+            </div>
           </section>
 
           {/* Task 5 */}
@@ -628,14 +648,24 @@ for thresh_val in thresholds:
             {ocrResult ? (
               <div className="text-xs space-y-1 mb-3">
                 <p><strong>Actual Text:</strong> {ocrResult.actual_text || "N/A"}</p>
-                <p><strong>Best OCR Output:</strong> {ocrResult.results[1]?.ocr_text || "N/A"}</p>
-                <p><strong>Accuracy:</strong> {ocrResult.results[1]?.accuracy ?? "N/A"}%</p>
+                <p><strong>Best OCR Output:</strong> {bestResult?.ocr_text || "N/A"}</p>
+                <p><strong>Best Accuracy:</strong> {bestResult?.accuracy ?? "N/A"}% (threshold {bestResult?.threshold})</p>
                 <p className="text-gray-500">Formula: Accuracy = (Correctly Recognized Characters / Total Characters) x 100</p>
               </div>
             ) : (
               <p className="text-xs text-gray-400 italic mb-3">Run OCR extraction above to include accuracy results.</p>
             )}
             <pre className="bg-gray-100 border border-gray-300 rounded p-3 text-[11px] overflow-x-auto"><code>{task5Code}</code></pre>
+            <div className="mt-3 text-xs">
+              <p className="font-bold text-gray-900">Discussion: Interpreting the accuracy metric</p>
+              <p className="text-gray-600 leading-relaxed">
+                The character-level accuracy metric counts how many characters in the OCR output match the
+                corresponding position in the actual text. A score of 100% means every character was correctly
+                recognized. Accuracy below 100% can result from noise in the image, poor contrast, font style,
+                or incorrect segmentation by Tesseract. For practical robotics applications (e.g., reading
+                nameplates or labels), an accuracy above 90% is typically needed for reliable automated action.
+              </p>
+            </div>
           </section>
 
           {/* Task 6 */}
